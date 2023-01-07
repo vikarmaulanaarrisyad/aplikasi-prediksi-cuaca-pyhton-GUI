@@ -100,7 +100,7 @@ def open():
     top.title(" Perkiraaan cuaca ")
     top.resizable(False, False)
     top.config(bg="#57adff")
-    
+
     # icon aplikasi
     image_icon = PhotoImage(file='assets/Images/logo.png')
     top.iconphoto(False, image_icon)
@@ -111,6 +111,28 @@ def open():
     # setting tkinter root size
     top.geometry("%dx%d" % (width, height))
     top.state('zoomed')
+
+    Round_box = PhotoImage(file='assets/Images/Rounded Rectangle 1.png')
+    Label(top, image=Round_box, bg="#57adff").place(x=30, y=110)
+
+    # label
+    label1 = Label(top, text="Suhu", font=(
+        "Helvetica", 25), fg="white", bg="#203243",)
+    label1.place(x=50, y=122)
+    
+    label2 = Label(top, text="Kelembapan", font=(
+        "Helvetica", 18), fg="white", bg="#203243")
+    label2.place(x=50, y=180)
+    
+    # label3 = Label(top, text="Pressure", font=(
+    #     "Helvetica", 18), fg="white", bg="#203243")
+    # label3.place(x=50, y=180)
+    # label4 = Label(top, text="Wind Speed", font=(
+    #     "Helvetica", 18), fg="white", bg="#203243")
+    # label4.place(x=50, y=200)
+    # label5 = Label(top, text="Description", font=(
+    #     "Helvetica", 18), fg="white", bg="#203243")
+    # label5.place(x=50, y=220)
 
     def predict():
         # Get the user input
@@ -128,13 +150,19 @@ def open():
     button.pack()
 
     # Add input fields for the features
+    # Tavg_var = tk.StringVar()
+    # Tavg_entry = tk.Entry(top, textvariable=Tavg_var)
+    # Tavg_entry.pack()
+    
     Tavg_var = tk.StringVar()
-    Tavg_entry = tk.Entry(top, textvariable=Tavg_var)
-    Tavg_entry.pack()
+    Tavg_entry = tk.Entry(top, width=10, font=(
+        'poppins', 25), bg="#203243", border=0, fg="white", textvariable=Tavg_var)
+    Tavg_entry.place(x=280, y=120)
 
     RH_avg_var = tk.StringVar()
-    RH_avg_entry = tk.Entry(top, textvariable=RH_avg_var)
-    RH_avg_entry.pack()
+    RH_avg_entry = tk.Entry(top, width=10, font=(
+        'poppins', 25), bg="#203243", border=0, fg="white",  textvariable=RH_avg_var)
+    RH_avg_entry.place(x=280, y=180)
 
     RR_var = tk.StringVar()
     RR_entry = tk.Entry(top, textvariable=RR_var)

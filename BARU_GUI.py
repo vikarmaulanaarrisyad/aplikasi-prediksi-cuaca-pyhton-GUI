@@ -71,7 +71,6 @@ def open():
     global logo
     top=Toplevel()
     top.title(" Halaman kedua ")
-    # logo=ImageTk.PhotoImage(Image.open("LOGO_UNDIP.jpg"))
     tampil_logo=Label(top, image=logo).pack()
     newlbl=Label(top,text=" close window", command=top.destroy).pack()
 
