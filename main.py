@@ -1,274 +1,204 @@
-from tkinter import *
+import pickle
+from tkinter import ttk
 import tkinter as tk
-from geopy.geocoders import Nominatim
-from tkinter import ttk, messagebox
-from timezonefinder import TimezoneFinder
-from datetime import datetime
-import requests
-import pytz
-from datetime import timedelta
-import json
-from urllib import request
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from tkinter import *
+import pandas as pd
+from PIL import ImageTk, Image
 
 
+# Halaman Pertama
 root = Tk()
-root.title('Weather App')
-root.geometry("890x470+300+200")
+root.title('Prakiraan Cuaca')
 root.config(bg="#57adff")
 root.resizable(False, False)
 
-
-# Fungsi mendapatkan data api
-def getWeather():
-    city = textfield.get()
-
-    geolocator = Nominatim(user_agent="geoapiExercises")
-    location = geolocator.geocode(city)
-    obj = TimezoneFinder()
-
-    result = obj.timezone_at(lng=location.longitude, lat=location.latitude)
-
-    timezone.config(text=result)
-    long_lat.config(
-        text=f"{round(location.latitude,4)}^N,{round(location.longitude,4)}^E ")
-
-    home = pytz.timezone(result)
-    local_time = datetime.now(home)
-    current_time = local_time.strftime("%I:%M %p")
-    clock.config(text=current_time)
-
-    # # weatherAPI
-    api = "https://api.openweathermap.org/data/2.5/weather?lat=" + \
-        str(location.latitude)+"&lon="+str(location.longitude) + \
-        "&units = metric & &appid = 913f24d609fa3567cf50fae05f916b97"
-    json_data = requests.get(api).json()
+# getting screen width and height of display
+width = root.winfo_screenwidth()
+height = root.winfo_screenheight()
+# setting tkinter root size
+root.geometry("%dx%d" % (width, height))
+root.state('zoomed')
 
 
-    # current
-    # temp = json_data['coord'][0]['lon']
-    # humidity = json_data['current']['humidity']
-    # pressure = json_data['current']['pressure']
-    # wind = json_data['current']['wind_speed']
-    # description = json_data['current']['weather'][0]['description']
-
-    t.config(text=(25.75, "C"))
-    h.config(text=(86, "%"))
-    p.config(text=(1009, "hPa"))
-    w.config(text=(2.06, "m/s"))
-    d.config(text=("Rain"))
-    # t.config(text=(temp, "C"))
-    # h.config(text=(humidity, "%"))
-    # p.config(text=(pressure, "hPa"))
-    # w.config(text=(wind, "m/s"))
-    # d.config(text=(description))
-
-    # # first cell
-    # firstdayimage = json_data['weather'][0]['icon']
-    # print(firstdayimage)
-    # # second cell
-    # secondayimage = json_data['weather'][0]['icon']
-    # print(secondayimage)
-    # # third cell
-    # thirddayimage = json_data['weather'][0]['icon']
-    # print(thirddayimage)
-    # # fourth cell
-    # fourthdayimage = json_data['weather'][0]['icon']
-    # print(fourthdayimage)
-    # # five cell
-    # fifthdayimage = json_data['weather'][0]['icon']
-    # print(fifthdayimage)
-    # # six cell
-    # sixthdayimage = json_data['weather'][0]['icon']
-    # print(sixthdayimage)
-    # # seven cell
-    # seventhdayimage = json_data['weather'][0]['icon']
-    # print(seventhdayimage)
-
-    # days
-    first = datetime.now()
-    day1.config(text=first.strftime("%A"))
-
-    second = first+timedelta(days=1)
-    day2.config(text=second.strftime("%A"))
-
-    third = first+timedelta(days=2)
-    day3.config(text=third.strftime("%A"))
-
-    fourth = first+timedelta(days=3)
-    day4.config(text=fourth.strftime("%A"))
-
-    fifth = first+timedelta(days=4)
-    day5.config(text=fifth.strftime("%A"))
-
-    sixth = first+timedelta(days=5)
-    day6.config(text=sixth.strftime("%A"))
-
-    seventh = first+timedelta(days=6)
-    day7.config(text=seventh.strftime("%A"))
-
-
-# Mengubah Icon APlikasi
-# image_icon = PhotoImage(file=assets\Images\logo.png')
+# icon aplikasi
 image_icon = PhotoImage(file='assets/Images/logo.png')
 root.iconphoto(False, image_icon)
 
+# add judul
+label1 = Label(
+    root, text="Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
+label1.config(bg="#57adff", font=("Poppins", 18))
+label1.pack(fill=X, pady=15)
 
-Round_box = PhotoImage(file='assets/Images/Rounded Rectangle 1.png')
-Label(root, image=Round_box, bg="#57adff").place(x=30, y=110)
-
-# label
-label1 = Label(root, text="Temperature", font=(
-    "Helvetica", 11), fg="white", bg="#203243")
-label1.place(x=50, y=120)
-label2 = Label(root, text="Humidity", font=(
-    "Helvetica", 11), fg="white", bg="#203243")
-label2.place(x=50, y=140)
-label3 = Label(root, text="Pressure", font=(
-    "Helvetica", 11), fg="white", bg="#203243")
-label3.place(x=50, y=160)
-label4 = Label(root, text="Wind Speed", font=(
-    "Helvetica", 11), fg="white", bg="#203243")
-label4.place(x=50, y=180)
-label5 = Label(root, text="Description", font=(
-    "Helvetica", 11), fg="white", bg="#203243")
-label5.place(x=50, y=200)
+# add logo undip
+logo = ImageTk.PhotoImage(Image.open("undip.png"))
+tampil_logo = Label(image=logo, bg="#57adff")
+tampil_logo.pack(fill=X, pady=2)
 
 
-# search box
-Search_image = PhotoImage(file="assets/Images/Rounded Rectangle 3.png")
-myimage = Label(image=Search_image, bg="#57adff")
-myimage.place(x=270, y=120)
+# add Identitas Mahasiswa
+label2 = Label(
+    root, text="Risky Via Feriyanti \n 21060120420027")
+label2.config(bg="#57adff", font=("Poppins", 18))
+label2.pack()
 
-weat_image = PhotoImage(file="assets/Images/Layer 7.png")
-weatherimage = Label(root, image=weat_image, bg="#203243")
-weatherimage.place(x=290, y=127)
+# Form Input
+form_input = Frame(root)
+form_input.config(bg="white")
+form_input.pack(padx=10, pady=10, fill='x', expand=True)
+nama_pengunjung = Label(form_input, text="Ketikkan Nama Pengunjung :")
+nama_pengunjung.pack(padx=100, fill='x', expand=True)
+Nama = StringVar()
+nama_depan_entry = Entry(form_input, textvariable=Nama)
+nama_depan_entry.pack(padx=100, pady=10, fill='x', expand=True)
 
-textfield = tk.Entry(root, justify="center", width=15, font=(
-    'poppins', 25, 'bold'), bg="#203243", border=0, fg="white")
-textfield.place(x=370, y=130)
-textfield.focus()
-
-Search_icon = PhotoImage(file="assets/Images/Layer 6.png")
-myimage_icon = Button(image=Search_icon, borderwidth=0,
-                      cursor="hand2", bg="#203243", command=getWeather)
-myimage_icon.place(x=645, y=125)
-
-# Bottom Box
-frame = Frame(root, width=900, height=180, bg="#212120")
-frame.pack(side=BOTTOM)
-
-# bottom boxes
-firstbox = PhotoImage(file="assets/Images/Rounded Rectangle 2.png")
-secondbox = PhotoImage(file="assets/Images/Rounded Rectangle 2 copy.png")
-
-Label(frame, image=firstbox, bg="#212120").place(x=30, y=20)
-Label(frame, image=secondbox, bg="#212120").place(x=300, y=30)
-Label(frame, image=secondbox, bg="#212120").place(x=400, y=30)
-Label(frame, image=secondbox, bg="#212120").place(x=500, y=30)
-Label(frame, image=secondbox, bg="#212120").place(x=600, y=30)
-Label(frame, image=secondbox, bg="#212120").place(x=700, y=30)
-Label(frame, image=secondbox, bg="#212120").place(x=800, y=30)
-
-# clock
-clock = Label(root, font=('Helvetica', 30, 'bold'), fg="white", bg="#57adff")
-clock.place(x=30, y=20)
-
-# timezone
-timezone = Label(root, font=('Helvetica', 20, 'bold'),
-                 fg="white", bg="#57adff")
-timezone.place(x=650, y=20)
+L = Label(form_input, padx=5, text="Tekan Klik")
+L.pack()
 
 
-long_lat = Label(root, font=('Helvetica', 10, 'bold'),
-                 fg="white", bg="#57adff")
-long_lat.place(x=650, y=50)
+def hal():
+    label4 = Label(form_input, padx=5, text="Selamat Datang !!!")
+    label5 = Label(form_input, textvariable=Nama)
+    label6 = Label(form_input, text="Apakah ingin melihat prakiraan cuaca?")
+    label4.pack()
+    label5.pack()
+    label6.pack()
 
 
-# thpwd
-t = Label(root, font=('Helvetica', 11), fg="white", bg="#203243")
-t.place(x=150, y=120)
-h = Label(root, font=('Helvetica', 11), fg="white", bg="#203243")
-h.place(x=150, y=140)
-p = Label(root, font=('Helvetica', 11), fg="white", bg="#203243")
-p.place(x=150, y=160)
-w = Label(root, font=('Helvetica', 11), fg="white", bg="#203243")
-w.place(x=150, y=180)
-d = Label(root, font=('Helvetica', 11), fg="white", bg="#203243")
-d.place(x=150, y=200)
+tombol1 = Button(root, text="Klik", padx=150,
+                 pady=20, bg="red", fg="black", command=hal)
+
+tombol1.pack(fill='x', expand=True)
+
+# End Halaman Pertama
 
 
-# first cell
-fristframe = Frame(root, width=230, height=132, bg="#282829")
-fristframe.place(x=35, y=315)
+# Halaman Dua
+# Load the weather data
+df = pd.read_excel("datadf.xlsx")
 
-day1 = Label(fristframe, font="arial 20", bg="#282829", fg="#fff")
-day1.place(x=100, y=5)
+# Select the features and target variable
+X = df[['Tavg', 'RH_avg', 'RR', 'ss', 'ff_avg']]
+y = df['target']
 
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
-firstimage = Label(fristframe, bg="#282829")
-firstimage.place(x=1, y=15)
+# Create the SVM classifier
+classifier = SVC(kernel='rbf', gamma='auto')
 
-
-# second cell
-secondframe = Frame(root, width=70, height=115, bg="#282829")
-secondframe.place(x=305, y=325)
-
-day2 = Label(secondframe, bg="#282829", fg="white")
-day2.place(x=10, y=5)
-
-secondimage = Label(secondframe, bg="#282829")
-secondimage.place(x=7, y=20)
-
-# thirtd cell
-thirdframe = Frame(root, width=70, height=115, bg="#282829")
-thirdframe.place(x=405, y=325)
-
-day3 = Label(thirdframe, bg="#282829", fg="#fff")
-day3.place(x=10, y=5)
-
-thirdimage = Label(thirdframe, bg="#282829")
-thirdimage.place(x=7, y=20)
-
-# fouth cell
-fourthframe = Frame(root, width=70, height=115, bg="#282829")
-fourthframe.place(x=505, y=325)
-
-day4 = Label(fourthframe, bg="#282829", fg="#fff")
-day4.place(x=10, y=5)
-
-fourthimage = Label(fourthframe, bg="#282829")
-fourthimage.place(x=7, y=20)
-
-# fifth cell
-fifthframe = Frame(root, width=70, height=115, bg="#282829")
-fifthframe.place(x=605, y=325)
+# Train the classifier
+classifier.fit(X_train, y_train)
 
 
-day5 = Label(fifthframe, bg="#282829", fg="#fff")
-day5.place(x=10, y=5)
+def open():
+    global logo
+    top = Toplevel()
+    top.title(" Perkiraaan cuaca ")
+    top.resizable(False, False)
+    top.config(bg="#57adff")
+
+    # icon aplikasi
+    image_icon = PhotoImage(file='assets/Images/logo.png')
+    top.iconphoto(False, image_icon)
+
+    # getting screen width and height of display
+    width = top.winfo_screenwidth()
+    height = top.winfo_screenheight()
+    # setting tkinter root size
+    top.geometry("%dx%d" % (width, height))
+    top.state('zoomed')
+
+    Round_box = PhotoImage(file='assets/Images/Rounded Rectangle 1.png')
+    Label(top, image=Round_box, bg="#57adff").place(x=30, y=110)
+
+    # label
+    label1 = Label(top, text="Suhu", font=(
+        "Helvetica", 18), fg="white", bg="#57adff",)
+    label1.place(x=50, y=122)
+
+    label2 = Label(top, text="Kelembapan", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label2.place(x=50, y=155)
+
+    label3 = Label(top, text="Curah Hujan", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label3.place(x=50, y=188)
+    label4 = Label(top, text="Kecepatan Angin", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label4.place(x=50, y=221)
+    label5 = Label(top, text="Penyinaran Matahari", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label5.place(x=50, y=254)
+    label6 = Label(top, text="Prediksi Cuaca", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label6.place(x=50, y=287)
+
+    def predict():
+        # Get the user input
+        Tavg = float(Tavg_var.get())
+        RH_avg = float(RH_avg_var.get())
+        RR = float(RR_var.get())
+        ss = float(ss_var.get())
+        ff_avg = float(ff_avg_var.get())
+
+        # Use the model to make a prediction
+        prediction = classifier.predict([[Tavg, RH_avg, RR, ss, ff_avg]])
+        cekTarget = prediction[0]
+
+        if cekTarget == 1:
+            label_var.set("Hujan Ringan")
+        elif cekTarget == 2:
+            label_var.set("Hujan Sedang")
+        elif cekTarget == 3:
+            label_var.set("Hujan Lebat")
+        else:
+            label_var.set("Cerah")
+
+        # label_var.set(f"Prediction: {prediction[0]}")
+
+    button = tk.Button(top, text="Predict", font=(
+        'poppins', 15), command=predict)
+    button.place(x=288, y=330)
+
+    # Add input fields for the features
+
+    Tavg_var = tk.StringVar()
+    Tavg_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15),  bg="#203243", border=0, fg="white", textvariable=Tavg_var)
+    Tavg_entry.place(x=288, y=120)
+
+    RH_avg_var = tk.StringVar()
+    RH_avg_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white",  textvariable=RH_avg_var)
+    RH_avg_entry.place(x=288, y=155)
+
+    RR_var = tk.StringVar()
+    RR_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=RR_var)
+    RR_entry.place(x=288, y=188)
+
+    ss_var = tk.StringVar()
+    ss_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=ss_var)
+    ss_entry.place(x=288, y=221)
+
+    ff_avg_var = tk.StringVar()
+    ff_avg_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=ff_avg_var)
+    ff_avg_entry.place(x=288, y=254)
+
+    # Add a label to display the prediction
+    label_var = tk.StringVar()
+    label = tk.Label(top, width=21, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=label_var)
+    label.place(x=288, y=287)
 
 
-fifthimage = Label(fifthframe, bg="#282829")
-fifthimage.place(x=7, y=20)
+btn = Button(root, padx=50, text=" Open Second Window", command=open).pack()
 
-# sixt cell
-sixthframe = Frame(root, width=70, height=115, bg="#282829")
-sixthframe.place(x=705, y=325)
 
-day6 = Label(sixthframe, bg="#282829", fg="#fff")
-day6.place(x=10, y=5)
-
-sixthimage = Label(sixthframe, bg="#282829")
-sixthimage.place(x=7, y=20)
-
-# seventh cell
-seventhframe = Frame(root, width=70, height=115, bg="#282829")
-seventhframe.place(x=805, y=325)
-
-day7 = Label(seventhframe, bg="#282829", fg="#fff")
-day7.place(x=10, y=5)
-
-seventhimage = Label(seventhframe, bg="#282829")
-seventhimage.place(x=7, y=20)
-
-root.mainloop()
+mainloop()

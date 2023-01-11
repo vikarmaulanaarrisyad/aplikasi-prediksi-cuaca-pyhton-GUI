@@ -1,0 +1,12 @@
+        # Create a figure for the confusion matrix plot
+        fig = Figure(figsize=(2, 3), dpi=100)
+        ax = fig.add_subplot(111)
+        ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+        ax.set_title("Confusion Matrix")
+
+        # Add the confusion matrix plot to the GUI
+        canvas = FigureCanvasTkAgg(fig, master=top)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+  # Add a navigation toolbar to the GUI
+        toolbar = NavigationToolbar2Tk(canvas, top)

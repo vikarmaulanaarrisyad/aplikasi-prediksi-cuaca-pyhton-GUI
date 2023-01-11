@@ -100,7 +100,7 @@ def open():
     top.title(" Perkiraaan cuaca ")
     top.resizable(False, False)
     top.config(bg="#57adff")
-    
+
     # icon aplikasi
     image_icon = PhotoImage(file='assets/Images/logo.png')
     top.iconphoto(False, image_icon)
@@ -112,6 +112,31 @@ def open():
     top.geometry("%dx%d" % (width, height))
     top.state('zoomed')
 
+    Round_box = PhotoImage(file='assets/Images/Rounded Rectangle 1.png')
+    Label(top, image=Round_box, bg="#57adff").place(x=30, y=110)
+
+    # label
+    label1 = Label(top, text="Suhu", font=(
+        "Helvetica", 18), fg="white", bg="#57adff",)
+    label1.place(x=50, y=122)
+
+    label2 = Label(top, text="Kelembapan", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label2.place(x=50, y=155)
+
+    label3 = Label(top, text="Curah Hujan", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label3.place(x=50, y=188)
+    label4 = Label(top, text="Kecepatan Angin", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label4.place(x=50, y=221)
+    label5 = Label(top, text="Penyinaran Matahari", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label5.place(x=50, y=254)
+    label6 = Label(top, text="Prediksi Cuaca", font=(
+        "Helvetica", 18), fg="white", bg="#57adff")
+    label6.place(x=50, y=287)
+
     def predict():
         # Get the user input
         Tavg = float(Tavg_var.get())
@@ -122,36 +147,55 @@ def open():
 
         # Use the model to make a prediction
         prediction = classifier.predict([[Tavg, RH_avg, RR, ss, ff_avg]])
-        label_var.set(f"Prediction: {prediction[0]}")
+        cekTarget = prediction[0]
 
-    button = tk.Button(top, text="Predict", command=predict)
-    button.pack()
+        if cekTarget == 1:
+            label_var.set("Hujan Ringan")
+        elif cekTarget == 2:
+            label_var.set("Hujan Sedang")
+        elif cekTarget == 3:
+            label_var.set("Hujan Lebat")
+        else:
+            label_var.set("Cerah")
+
+        # label_var.set(f"Prediction: {prediction[0]}")
+
+    button = tk.Button(top, text="Predict", font=(
+        'poppins', 15), command=predict)
+    button.place(x=288, y=330)
 
     # Add input fields for the features
+
     Tavg_var = tk.StringVar()
-    Tavg_entry = tk.Entry(top, textvariable=Tavg_var)
-    Tavg_entry.pack()
+    Tavg_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15),  bg="#203243", border=0, fg="white", textvariable=Tavg_var)
+    Tavg_entry.place(x=288, y=120)
 
     RH_avg_var = tk.StringVar()
-    RH_avg_entry = tk.Entry(top, textvariable=RH_avg_var)
-    RH_avg_entry.pack()
+    RH_avg_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white",  textvariable=RH_avg_var)
+    RH_avg_entry.place(x=288, y=155)
 
     RR_var = tk.StringVar()
-    RR_entry = tk.Entry(top, textvariable=RR_var)
-    RR_entry.pack()
+    RR_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=RR_var)
+    RR_entry.place(x=288, y=188)
 
     ss_var = tk.StringVar()
-    ss_entry = tk.Entry(top, textvariable=ss_var)
-    ss_entry.pack()
+    ss_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=ss_var)
+    ss_entry.place(x=288, y=221)
 
     ff_avg_var = tk.StringVar()
-    ff_avg_entry = tk.Entry(top, textvariable=ff_avg_var)
-    ff_avg_entry.pack()
+    ff_avg_entry = tk.Entry(top, width=20, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=ff_avg_var)
+    ff_avg_entry.place(x=288, y=254)
 
     # Add a label to display the prediction
     label_var = tk.StringVar()
-    label = tk.Label(top, textvariable=label_var)
-    label.pack()
+    label = tk.Label(top, width=21, font=(
+        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=label_var)
+    label.place(x=288, y=287)
 
 
 btn = Button(root, padx=50, text=" Open Second Window", command=open).pack()
