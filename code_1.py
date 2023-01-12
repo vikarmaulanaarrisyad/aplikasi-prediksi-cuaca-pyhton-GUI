@@ -78,23 +78,55 @@ class WeatherPrediction(tk.Frame):
         self.right_frame = tk.Frame(self)
         self.right_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
-        self.city_label = tk.Label(
-            self.left_frame, text="Kota:")
-        self.city_label.grid(row=1)
+        self.suhu_label = tk.Label(
+            self.left_frame, text="Suhu : ")
+        self.suhu_label.grid(row=0, column=0)
 
-        self.city_entry = tk.Entry(self.left_frame)
-        self.city_entry.grid(row=2)
+        self.suhu_entry = tk.Entry(self.left_frame)
+        self.suhu_entry.grid(row=0, column=1)
 
-        self.predict_button = tk.Button(
-            self.left_frame, text="Prediksi", command=self.predict_weather)
-        self.predict_button.grid(row=3)
+        self.kelembapan_label = tk.Label(
+            self.left_frame, text="Kelembapan : ")
+        self.kelembapan_label.grid(row=1, column=0)
 
-        self.prev_button = tk.Button(
-            self.left_frame, text="Sebelumnya", command=self.show_prev_page)
-        self.prev_button.grid(row=4)
+        self.kelembapan_entry = tk.Entry(self.left_frame)
+        self.kelembapan_entry.grid(row=1, column=1)
+        
+        self.curah_hujan_label = tk.Label(
+            self.left_frame, text="Curah hujan : ")
+        self.curah_hujan_label.grid(row=2, column=0)
 
-        self.city_label = tk.Label(self.right_frame, text="Kota:")
-        self.city_label.grid(row=1)
+        self.curah_hujan_entry = tk.Entry(self.left_frame)
+        self.curah_hujan_entry.grid(row=2, column=1)
+        
+        self.kecepatan_angin_label = tk.Label(
+            self.left_frame, text="Kecepatan Angin : ")
+        self.kecepatan_angin_label.grid(row=3, column=0)
+
+        self.kecepatan_angin_entry = tk.Entry(self.left_frame)
+        self.kecepatan_angin_entry.grid(row=3, column=1)
+        
+        self.penyinaran_matahari_label = tk.Label(
+            self.left_frame, text="Penyinaran Matahari : ")
+        self.penyinaran_matahari_label.grid(row=4, column=0)
+
+        self.penyinaran_matahari_entry = tk.Entry(self.left_frame)
+        self.penyinaran_matahari_entry.grid(row=4, column=1)
+
+
+
+
+
+        # self.predict_button = tk.Button(
+        #     self.left_frame, text="Prediksi", command=self.predict_weather)
+        # self.predict_button.grid(row=3)
+
+        # self.prev_button = tk.Button(
+        #     self.left_frame, text="Sebelumnya", command=self.show_prev_page)
+        # self.prev_button.grid(row=4)
+
+        # self.city_label = tk.Label(self.right_frame, text="Kota:")
+        # self.city_label.grid(row=1)
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
@@ -122,7 +154,7 @@ class App(tk.Tk):
 
 if __name__ == '__main__':
     app = App()
-
+    app.title('Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal')
     # getting screen width and height of display
     width = app.winfo_screenwidth()
     height = app.winfo_screenheight()
