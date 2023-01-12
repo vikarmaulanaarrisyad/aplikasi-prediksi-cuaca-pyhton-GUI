@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn import svm
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 import seaborn as sns
 from matplotlib.backends.backend_tkagg import (
@@ -210,7 +211,7 @@ class WeatherPrediction(tk.Frame):
 
         # 3 : Membagi data menjadi data latih dan data uji
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=0)
+            X, y, test_size=0.3, random_state=0)
 
         # 4 : melakukan preprocesing data
         scaler = StandardScaler()
@@ -224,9 +225,14 @@ class WeatherPrediction(tk.Frame):
 
         # 6 : Membuat prediksi pada data uji
         y_pred = clf.predict(X_test)
+        
+
+        # menampilkan classification report
+        print(classification_report(y_test, y_pred))
 
         # 7 : Membuat confusion matrix
         cm = confusion_matrix(y_test, y_pred)
+        
 
         # 8 : Menangkap inputan user
         suhu = float(self.suhu_entry.get())
@@ -272,10 +278,10 @@ class WeatherPrediction(tk.Frame):
         fig = Figure(figsize=(5, 5), dpi=100)
         ax = fig.add_subplot(111)
 
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax)
+        sns.heatmap(cm, annot=True, fmt='.0f', cmap='Blues', ax=ax)
         ax.set_title("Confusion Matrix")
-        ax.set_ylabel('Actual Label')
-        ax.set_xlabel('Predicted Label')
+        ax.set_ylabel('Output')
+        ax.set_xlabel('Target')
 
         canvas = FigureCanvasTkAgg(fig, master=self)
         canvas.draw()
