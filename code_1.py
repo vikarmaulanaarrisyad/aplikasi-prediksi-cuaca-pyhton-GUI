@@ -1,6 +1,9 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 import tkinter.messagebox as messagebox
+import pandas as pd
+from sklearn import svm
+from sklearn.preprocessing import StandardScaler
 
 
 class StudentProfile(tk.Frame):
@@ -47,8 +50,8 @@ class StudentProfile(tk.Frame):
 
     def submit_form(self):
         nama_pengunjung = self.input_nama_pengunjung.get()
-        
-        if nama_pengunjung != "" :
+
+        if nama_pengunjung != "":
             self.hasil_input_nama = tk.Label(
                 self, text='Selamat Datang ' + nama_pengunjung + ' Klik Selanjutnya, Untuk dapat membuka aplikasi ini',)
             self.hasil_input_nama.config(font=("Poppins", 17))
@@ -59,7 +62,8 @@ class StudentProfile(tk.Frame):
             self.next_button.config(font=('Poppins', 13, 'bold'))
             self.next_button.grid(row=7)
         if nama_pengunjung == "":
-            messagebox.showwarning("Weather Prediction","Nama tidak boleh kosong")            
+            messagebox.showwarning("Weather Prediction",
+                                   "Nama tidak boleh kosong")
 
     def show_weather_page(self):
         if messagebox.askyesno("Weather Prediction", "Apakah Anda ingin melihat halaman prediksi cuaca?"):
@@ -90,7 +94,8 @@ class WeatherPrediction(tk.Frame):
         self.suhu_label.config(font=('Poppins', 17))
         self.suhu_label.grid(row=0, column=0, pady=10, sticky="w")
 
-        self.suhu_entry = tk.Entry(self.left_frame)
+        suhu_var = tk.StringVar()
+        self.suhu_entry = tk.Entry(self.left_frame, textvariable=suhu_var)
         self.suhu_entry.config(font=('Poppins', 17))
         self.suhu_entry.config(width=5)
         self.suhu_entry.grid(row=0, column=0, padx=270, pady=10, sticky="w")
@@ -151,11 +156,17 @@ class WeatherPrediction(tk.Frame):
             self.left_frame, text="Hasil Prediksi")
         self.hasil_prediksi_label.config(font=('Poppins', 17))
         self.hasil_prediksi_label.grid(
-            row=6, column=0, pady=10, sticky="w")
+            row=6, column=0, pady=10, sticky="w")   
 
-        self.hasil_prediksi = tk.Label(self.left_frame, text="")
+        self.icon_hasil_prediksi = tk.Label(self.left_frame)
+        self.icon_hasil_prediksi.config(font=('Poppins', 17))
+        self.icon_hasil_prediksi.grid(
+            row=6, column=0, padx=170, pady=10, sticky="w")
+
+        self.hasil_prediksi = tk.Label(self.left_frame)
         self.hasil_prediksi.config(font=('Poppins', 17))
-        self.hasil_prediksi.grid(row=6, column=1, pady=10, sticky="w")
+        self.hasil_prediksi.grid(
+            row=6, column=0, padx=290, pady=10, sticky="w")
 
         self.predict_button = tk.Button(
             self.left_frame, text="Prediksi", command=self.predict_weather)
@@ -175,7 +186,61 @@ class WeatherPrediction(tk.Frame):
 
     def predict_weather(self):
         # logika untuk memprediksi cuaca
-        pass
+
+        # 1 : Memuat dataset cuaca
+        weather_data = pd.read_excel('datadf.xlsx')
+
+        # 2 : Memisahkan fitur dan label
+        X = weather_data[['Tavg', 'RH_avg', 'RR', 'ss', 'ff_avg']]
+        y = weather_data['target']
+
+        # 3 : melakukan preprocesing data
+        scaler = StandardScaler()
+        X = scaler.fit_transform(X)
+
+        # 4 : Membuat objek SVM dan melatih model dengan dataMembuat objek SVM dan melatih model dengan data
+        clf = svm.SVC()
+        clf.fit(X, y)
+
+        # 5 : Menangkap inputan user
+        suhu = float(self.suhu_entry.get())
+        kelembaban = float(self.kelembaban_entry.get())
+        curah_hujan = float(self.curah_hujan_entry.get())
+        kecepatan_angin = float(self.kecepatan_angin_entry.get())
+        penyinaran_matahari = float(self.penyinaran_matahari_entry.get())
+
+        # 6 : Menampung data dari user dan menyimpan ke var input data dengan array
+        input_data = [[suhu, kelembaban, curah_hujan,
+                       kecepatan_angin, penyinaran_matahari]]
+
+        # 7 : Proses clasifikasi model
+        input_data = scaler.transform(input_data)
+        predicted_label = clf.predict(input_data)
+
+        # 8 : Hasil prediksi
+
+        print("Prediksi cuaca:", predicted_label[0])
+
+        cek_prediksi = predicted_label[0]
+
+        if cek_prediksi == 1:
+            self.image_icon = ImageTk.PhotoImage(Image.open("hujan_ringan.png"))
+            self.icon_hasil_prediksi.config(image=self.image_icon)
+            self.hasil_prediksi.config(text="Hujan Ringan")
+        elif cek_prediksi == 2:
+            self.image_icon = ImageTk.PhotoImage(Image.open("hujan_ringan.png"))
+            self.icon_hasil_prediksi.config(image=self.image_icon)
+            self.hasil_prediksi.config(text="Hujan Sedang")
+        elif cek_prediksi == 3:
+            self.image_icon = ImageTk.PhotoImage(Image.open("hujan_lebat.png"))
+            self.icon_hasil_prediksi.config(image=self.image_icon)
+            self.hasil_prediksi.config(text="Hujan Lebat")
+        elif cek_prediksi == 4:
+            self.image_icon = ImageTk.PhotoImage(Image.open("cerah.png"))
+            self.icon_hasil_prediksi.config(image=self.image_icon)
+            self.hasil_prediksi.config(text="Cerah")
+            
+        # pass
 
     def show_prev_page(self):
         self.master.switch_frame(StudentProfile)
