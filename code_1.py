@@ -80,42 +80,48 @@ class WeatherPrediction(tk.Frame):
 
         self.suhu_label = tk.Label(
             self.left_frame, text="Suhu : ")
-        self.suhu_label.grid(row=0, column=0)
+        self.suhu_label.config(font=('Poppins', 17))
+        self.suhu_label.grid(row=0, column=0, padx=10, pady=10)
 
         self.suhu_entry = tk.Entry(self.left_frame)
-        self.suhu_entry.grid(row=0, column=1)
+        self.suhu_entry.config(font=('Poppins', 17))
+        self.suhu_entry.grid(row=0, column=1, padx=10, pady=10)
 
-        self.kelembapan_label = tk.Label(
-            self.left_frame, text="Kelembapan : ")
-        self.kelembapan_label.grid(row=1, column=0)
+        self.kelembaban_label = tk.Label(
+            self.left_frame, text="Kelembaban : ")
+        self.kelembaban_label.config(font=('Poppins', 17))
+        self.kelembaban_label.grid(row=1, column=0, padx=10, pady=10)
 
-        self.kelembapan_entry = tk.Entry(self.left_frame)
-        self.kelembapan_entry.grid(row=1, column=1)
-        
+        self.kelembaban_entry = tk.Entry(self.left_frame)
+        self.kelembaban_entry.config(font=('Poppins', 17))
+        self.kelembaban_entry.grid(row=1, column=1, padx=10, pady=10)
+
         self.curah_hujan_label = tk.Label(
             self.left_frame, text="Curah hujan : ")
-        self.curah_hujan_label.grid(row=2, column=0)
+        self.curah_hujan_label.config(font=('Poppins', 17))
+        self.curah_hujan_label.grid(row=2, column=0, padx=10, pady=10)
 
         self.curah_hujan_entry = tk.Entry(self.left_frame)
-        self.curah_hujan_entry.grid(row=2, column=1)
-        
+        self.curah_hujan_entry.config(font=('Poppins', 17))
+        self.curah_hujan_entry.grid(row=2, column=1, padx=10, pady=10)
+
         self.kecepatan_angin_label = tk.Label(
             self.left_frame, text="Kecepatan Angin : ")
-        self.kecepatan_angin_label.grid(row=3, column=0)
+        self.kecepatan_angin_label.config(font=('Poppins',17))
+        self.kecepatan_angin_label.grid(row=3, column=0, padx=10, pady=10)
 
         self.kecepatan_angin_entry = tk.Entry(self.left_frame)
-        self.kecepatan_angin_entry.grid(row=3, column=1)
-        
+        self.kecepatan_angin_entry.config(font=('Poppins', 17))
+        self.kecepatan_angin_entry.grid(row=3, column=1, padx=10, pady=10)
+
         self.penyinaran_matahari_label = tk.Label(
             self.left_frame, text="Penyinaran Matahari : ")
-        self.penyinaran_matahari_label.grid(row=4, column=0)
+        self.penyinaran_matahari_label.config(font=('Poppins', 17))
+        self.penyinaran_matahari_label.grid(row=4, column=0, padx=10, pady=10)
 
         self.penyinaran_matahari_entry = tk.Entry(self.left_frame)
-        self.penyinaran_matahari_entry.grid(row=4, column=1)
-
-
-
-
+        self.penyinaran_matahari_entry.config(font=('Poppins', 17))
+        self.penyinaran_matahari_entry.grid(row=4, column=1, padx=10, pady=10)
 
         # self.predict_button = tk.Button(
         #     self.left_frame, text="Prediksi", command=self.predict_weather)
