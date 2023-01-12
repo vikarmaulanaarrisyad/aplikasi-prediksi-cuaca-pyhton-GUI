@@ -47,16 +47,19 @@ class StudentProfile(tk.Frame):
 
     def submit_form(self):
         nama_pengunjung = self.input_nama_pengunjung.get()
+        
+        if nama_pengunjung != "" :
+            self.hasil_input_nama = tk.Label(
+                self, text='Selamat Datang ' + nama_pengunjung + ' Klik Selanjutnya, Untuk dapat membuka aplikasi ini',)
+            self.hasil_input_nama.config(font=("Poppins", 17))
+            self.hasil_input_nama.grid(row=6, padx=10, pady=10)
 
-        self.hasil_input_nama = tk.Label(
-            self, text='Selamat Datang ' + nama_pengunjung + ' Klik Selanjutnya, Untuk dapat membuka aplikasi ini',)
-        self.hasil_input_nama.config(font=("Poppins", 17))
-        self.hasil_input_nama.grid(row=6, padx=10, pady=10)
-
-        self.next_button = tk.Button(
-            self, text="Selanjutnya", command=self.show_weather_page)
-        self.next_button.config(font=('Poppins', 13, 'bold'))
-        self.next_button.grid(row=7)
+            self.next_button = tk.Button(
+                self, text="Selanjutnya", command=self.show_weather_page)
+            self.next_button.config(font=('Poppins', 13, 'bold'))
+            self.next_button.grid(row=7)
+        if nama_pengunjung == "":
+            messagebox.showwarning("","Nama tidak boleh kosong")            
 
     def show_weather_page(self):
         if messagebox.askyesno("Weather Prediction", "Apakah Anda ingin melihat halaman prediksi cuaca?"):
