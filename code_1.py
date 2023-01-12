@@ -59,7 +59,7 @@ class StudentProfile(tk.Frame):
             self.next_button.config(font=('Poppins', 13, 'bold'))
             self.next_button.grid(row=7)
         if nama_pengunjung == "":
-            messagebox.showwarning("","Nama tidak boleh kosong")            
+            messagebox.showwarning("Weather Prediction","Nama tidak boleh kosong")            
 
     def show_weather_page(self):
         if messagebox.askyesno("Weather Prediction", "Apakah Anda ingin melihat halaman prediksi cuaca?"):
