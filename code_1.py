@@ -1,5 +1,6 @@
 import tkinter as tk
 from PIL import ImageTk, Image
+import tkinter.messagebox as messagebox
 
 
 class StudentProfile(tk.Frame):
@@ -58,7 +59,8 @@ class StudentProfile(tk.Frame):
         self.next_button.grid(row=7)
 
     def show_weather_page(self):
-        self.master.switch_frame(WeatherPrediction)
+        if messagebox.askyesno("Weather Prediction", "Apakah Anda ingin melihat halaman prediksi cuaca?"):
+            self.master.switch_frame(WeatherPrediction)
 
 
 class WeatherPrediction(tk.Frame):
@@ -72,7 +74,7 @@ class WeatherPrediction(tk.Frame):
         self.nama_judul.config(
             text="Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
         self.nama_judul.config(font=("Poppins", 17))
-        self.nama_judul.grid(row=0, padx=10, pady=5)
+        self.nama_judul.grid(row=0, padx=10, pady=5, sticky="")
 
         self.left_frame = tk.Frame(self)
         self.left_frame.grid(row=1, column=0, padx=5, pady=10, sticky="w")
