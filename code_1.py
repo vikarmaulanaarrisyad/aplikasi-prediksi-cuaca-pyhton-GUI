@@ -35,6 +35,7 @@ class StudentProfile(tk.Frame):
 
         self.input_nama_pengunjung = tk.Entry(self)
         self.input_nama_pengunjung.config(font=("Poppins", 15))
+        self.input_nama_pengunjung.config(width=30)
         self.input_nama_pengunjung.grid(row=4, pady=10)
 
         self.btn_submit_form = tk.Button(
@@ -74,62 +75,92 @@ class WeatherPrediction(tk.Frame):
         self.nama_judul.grid(row=0, padx=10, pady=5)
 
         self.left_frame = tk.Frame(self)
-        self.left_frame.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        self.left_frame.grid(row=1, column=0, padx=5, pady=10, sticky="w")
         self.right_frame = tk.Frame(self)
-        self.right_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+        self.right_frame.grid(row=1, column=1, padx=200, pady=10, sticky="w")
 
+        # FORM DAN LABEL SUHU
         self.suhu_label = tk.Label(
             self.left_frame, text="Suhu : ")
         self.suhu_label.config(font=('Poppins', 17))
-        self.suhu_label.grid(row=0, column=0, padx=10, pady=10)
+        self.suhu_label.grid(row=0, column=0, pady=10, sticky="w")
 
         self.suhu_entry = tk.Entry(self.left_frame)
         self.suhu_entry.config(font=('Poppins', 17))
-        self.suhu_entry.grid(row=0, column=1, padx=10, pady=10)
+        self.suhu_entry.config(width=5)
+        self.suhu_entry.grid(row=0, column=0, padx=270, pady=10, sticky="w")
 
+        # END FORM DAN LABEL SUHU
+
+        # FORM DAN LABEL KELEMBABAN
         self.kelembaban_label = tk.Label(
             self.left_frame, text="Kelembaban : ")
         self.kelembaban_label.config(font=('Poppins', 17))
-        self.kelembaban_label.grid(row=1, column=0, padx=10, pady=10)
+        self.kelembaban_label.grid(
+            row=1, column=0, pady=10, sticky="w")
 
         self.kelembaban_entry = tk.Entry(self.left_frame)
         self.kelembaban_entry.config(font=('Poppins', 17))
-        self.kelembaban_entry.grid(row=1, column=1, padx=10, pady=10)
+        self.kelembaban_entry.config(width=5)
+        self.kelembaban_entry.grid(
+            row=1, column=0, padx=270, pady=10, sticky="w")
+
+        # END FORM DAN LABEL KELEMBABAN
 
         self.curah_hujan_label = tk.Label(
             self.left_frame, text="Curah hujan : ")
         self.curah_hujan_label.config(font=('Poppins', 17))
-        self.curah_hujan_label.grid(row=2, column=0, padx=10, pady=10)
+        self.curah_hujan_label.grid(row=2, column=0, pady=10, sticky="w")
 
         self.curah_hujan_entry = tk.Entry(self.left_frame)
         self.curah_hujan_entry.config(font=('Poppins', 17))
-        self.curah_hujan_entry.grid(row=2, column=1, padx=10, pady=10)
+        self.curah_hujan_entry.config(width=5)
+        self.curah_hujan_entry.grid(
+            row=2, column=0, padx=270, pady=10, sticky="w")
 
         self.kecepatan_angin_label = tk.Label(
             self.left_frame, text="Kecepatan Angin : ")
-        self.kecepatan_angin_label.config(font=('Poppins',17))
-        self.kecepatan_angin_label.grid(row=3, column=0, padx=10, pady=10)
+        self.kecepatan_angin_label.config(font=('Poppins', 17))
+        self.kecepatan_angin_label.grid(
+            row=3, column=0, pady=10, sticky="w")
 
         self.kecepatan_angin_entry = tk.Entry(self.left_frame)
         self.kecepatan_angin_entry.config(font=('Poppins', 17))
-        self.kecepatan_angin_entry.grid(row=3, column=1, padx=10, pady=10)
+        self.kecepatan_angin_entry.config(width=5)
+        self.kecepatan_angin_entry.grid(
+            row=3, column=0, padx=270, pady=10, sticky="w")
 
         self.penyinaran_matahari_label = tk.Label(
             self.left_frame, text="Penyinaran Matahari : ")
         self.penyinaran_matahari_label.config(font=('Poppins', 17))
-        self.penyinaran_matahari_label.grid(row=4, column=0, padx=10, pady=10)
+        self.penyinaran_matahari_label.grid(
+            row=4, column=0, pady=10, sticky="w")
 
         self.penyinaran_matahari_entry = tk.Entry(self.left_frame)
         self.penyinaran_matahari_entry.config(font=('Poppins', 17))
-        self.penyinaran_matahari_entry.grid(row=4, column=1, padx=10, pady=10)
+        self.penyinaran_matahari_entry.config(width=5)
+        self.penyinaran_matahari_entry.grid(
+            row=4, column=0, padx=270, pady=10, sticky="w")
 
-        # self.predict_button = tk.Button(
-        #     self.left_frame, text="Prediksi", command=self.predict_weather)
-        # self.predict_button.grid(row=3)
+        self.hasil_prediksi_label = tk.Label(
+            self.left_frame, text="Hasil Prediksi")
+        self.hasil_prediksi_label.config(font=('Poppins', 17))
+        self.hasil_prediksi_label.grid(
+            row=6, column=0, pady=10, sticky="w")
 
-        # self.prev_button = tk.Button(
-        #     self.left_frame, text="Sebelumnya", command=self.show_prev_page)
-        # self.prev_button.grid(row=4)
+        self.hasil_prediksi = tk.Label(self.left_frame, text="")
+        self.hasil_prediksi.config(font=('Poppins', 17))
+        self.hasil_prediksi.grid(row=6, column=1, pady=10, sticky="w")
+
+        self.predict_button = tk.Button(
+            self.left_frame, text="Prediksi", command=self.predict_weather)
+        self.predict_button.config(font=('Poppins', 15))
+        self.predict_button.grid(row=5, column=0, pady=10, sticky="w")
+
+        self.prev_button = tk.Button(
+            self.left_frame, text="Sebelumnya", command=self.show_prev_page)
+        self.prev_button.config(font=('Poppins', 15))
+        self.prev_button.grid(row=5, column=0, padx=100, pady=10, sticky="w")
 
         # self.city_label = tk.Label(self.right_frame, text="Kota:")
         # self.city_label.grid(row=1)
