@@ -26,7 +26,6 @@ class WeatherApp:
         master.geometry("%dx%d" % (width, height))
         master.state('zoomed')
 
-
         # icon aplikasi
         image_icon = PhotoImage(file='assets/Images/logo.png')
         master.iconphoto(False, image_icon)
@@ -56,6 +55,11 @@ class WeatherApp:
 
         # Create the predict button
         self.create_confusion_matrix_button()
+        
+        self.label_var = tk.StringVar()
+        self.label = tk.Label(master, textvariable=self.label_var)
+        self.label.grid(column=0, row=8, padx=10, pady=10)
+        self.label_var.set("Hasil")
 
     def create_form_inputs(self):
         self.Tavg_var = tk.StringVar()
@@ -99,32 +103,51 @@ class WeatherApp:
 
     def create_confusion_matrix_button(self):
         predict_button = ttk.Button(
-            self.master, text="Confusion Matrix", command=self.consufion_matrix)
+            self.master, text="Confusion Matrix", command=self.create_confusion_matrix)
         predict_button.grid(column=2, row=5, padx=10, pady=10)
-
-    def consufion_matrix(self):
-        # Use the model to make a prediction
-        prediction = self.classifier.predict(self.X_test)
+        
+    def create_confusion_matrix(self, prediction):
+            # Create the confusion matrix
+        cm = confusion_matrix(self.y_test, prediction)
 
         # Create a figure for the confusion matrix plot
-        fig = Figure(figsize=(6, 4), dpi=100)
-        fig.clf()
-        ax = fig.add_subplot(111)
-        sns.heatmap(confusion_matrix(self.y_test, prediction),
-                    annot=True, fmt=".0f", ax=ax)
+        fig = Figure(figsize=(8, 6), dpi=100)
+        ax = fig.add_subsubplot(111)
+        ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
         ax.set_title("Confusion Matrix")
-        ax.set_xlabel('Target')
-        ax.set_ylabel('Output')
+        if cekTarget == 1:
+            label_var.set("Hujan Ringan")
+        elif cekTarget == 2:
+            label_var.set("Hujan Sedang")
+        elif cekTarget == 3:
+            label_var.set("Hujan Lebat")
+        else:
+            label_var.set("Cerah")
 
-        # Add the confusion matrix plot to the GUI
-        canvas = FigureCanvasTkAgg(fig, master=self.master)
-        canvas.draw()
-        canvas.get_tk_widget().grid(column=5, row=0, columnspan=5, rowspan=12, padx=10, pady=10)
+    # def consufion_matrix(self,):
+    #     # Use the model to make a prediction
+    #     prediction = self.classifier.predict(self.X_test)
 
-        # Add a navigation toolbar to the GUI
-        toolbar = NavigationToolbar2Tk(canvas, self.master)
-        toolbar.update()
-        canvas.get_tk_widget().grid(row=7, column=2, )
+    #     # Create a figure for the confusion matrix plot
+    #     fig = Figure(figsize=(6, 4), dpi=100)
+    #     fig.clf()
+    #     ax = fig.add_subplot(111)
+    #     sns.heatmap(confusion_matrix(self.y_test, prediction),
+    #                 annot=True, fmt=".0f", ax=ax)
+    #     ax.set_title("Confusion Matrix")
+    #     ax.set_xlabel('Target')
+    #     ax.set_ylabel('Output')
+
+    #     # Add the confusion matrix plot to the GUI
+    #     canvas = FigureCanvasTkAgg(fig, master=self.master)
+    #     canvas.draw()
+    #     canvas.get_tk_widget().grid(column=5, row=0, columnspan=5,
+    #                                 rowspan=12, padx=10, pady=10)
+
+    #     # Add a navigation toolbar to the GUI
+    #     toolbar = NavigationToolbar2Tk(canvas, self.master)
+    #     toolbar.update()
+    #     canvas.get_tk_widget().grid(row=7, column=2, )
 
     def predict(self):
         # Get the user input
@@ -135,19 +158,21 @@ class WeatherApp:
         ff_avg = float(self.FF_var.get())
 
         # Use the model to make a prediction
-        prediction = self.classifier.predict(
-            ([[Tavg, RH_avg, RR, ss, ff_avg]]))
-        # prediction = self.classifier.predict(self.X_test)
-        cekTarget = prediction[0]
+        # prediction = self.classifier.predict([[Tavg, RH_avg, RR, ss, ff_avg]])
+        prediction = self.classifier.predict(self.X_test)
+        # cekTarget = prediction[0]
 
-        if cekTarget == 1:
-            self.label_var.set("Hujan Ringan")
-        elif cekTarget == 2:
-            self.label_var.set("Hujan Sedang")
-        elif cekTarget == 3:
-            self.label_var.set("Hujan Lebat")
-        else:
-            self.label_var.set("Cerah")
+        # if prediction == 1:
+        #     self.label_var.set("Hujan Ringan")
+        # elif prediction == 2:
+        #     self.label_var.set("Hujan Sedang")
+        # elif prediction == 3:
+        #     self.label_var.set("Hujan Lebat")
+        # else:
+        #     self.label_var.set("Cerah")
+
+
+        self.create_confusion_matrix(prediction)
 
 
 root = tk.Tk()
