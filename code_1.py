@@ -4,6 +4,13 @@ import tkinter.messagebox as messagebox
 import pandas as pd
 from sklearn import svm
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
+import seaborn as sns
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 
 class StudentProfile(tk.Frame):
@@ -81,12 +88,12 @@ class WeatherPrediction(tk.Frame):
         self.nama_judul.config(
             text="Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
         self.nama_judul.config(font=("Poppins", 17))
-        self.nama_judul.grid(row=0, padx=10, pady=5, sticky="")
+        self.nama_judul.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         self.left_frame = tk.Frame(self)
         self.left_frame.grid(row=1, column=0, padx=5, pady=10, sticky="w")
         self.right_frame = tk.Frame(self)
-        self.right_frame.grid(row=1, column=1, padx=200, pady=10, sticky="w")
+        self.right_frame.grid(row=1, column=1, padx=100, pady=200, sticky="nwes")
 
         # FORM DAN LABEL SUHU
         self.suhu_label = tk.Label(
@@ -156,7 +163,7 @@ class WeatherPrediction(tk.Frame):
             self.left_frame, text="Hasil Prediksi")
         self.hasil_prediksi_label.config(font=('Poppins', 17))
         self.hasil_prediksi_label.grid(
-            row=6, column=0, pady=10, sticky="w")   
+            row=6, column=0, pady=10, sticky="w")
 
         self.icon_hasil_prediksi = tk.Label(self.left_frame)
         self.icon_hasil_prediksi.config(font=('Poppins', 17))
@@ -178,6 +185,13 @@ class WeatherPrediction(tk.Frame):
         self.prev_button.config(font=('Poppins', 15))
         self.prev_button.grid(row=5, column=0, padx=100, pady=10, sticky="w")
 
+        # Right Frame
+        # Consusion Matrix
+        # create table to display confusion matrix
+        # self.cm_label = tk.Label(self.right_frame, text="Confusion Matrix")
+        # self.cm_label.config(font=("Poppins", 17))
+        # self.cm_label.grid(row=1, column=1)
+
         # self.city_label = tk.Label(self.right_frame, text="Kota:")
         # self.city_label.grid(row=1)
 
@@ -194,41 +208,55 @@ class WeatherPrediction(tk.Frame):
         X = weather_data[['Tavg', 'RH_avg', 'RR', 'ss', 'ff_avg']]
         y = weather_data['target']
 
-        # 3 : melakukan preprocesing data
+        # 3 : Membagi data menjadi data latih dan data uji
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=0)
+
+        # 4 : melakukan preprocesing data
         scaler = StandardScaler()
-        X = scaler.fit_transform(X)
+        # X = scaler.fit_transform(X)
+        X_train = scaler.fit_transform(X_train)
+        X_test = scaler.transform(X_test)
 
-        # 4 : Membuat objek SVM dan melatih model dengan dataMembuat objek SVM dan melatih model dengan data
+        # 5 : Membuat objek SVM dan melatih model dengan dataMembuat objek SVM dan melatih model dengan data
         clf = svm.SVC()
-        clf.fit(X, y)
+        clf.fit(X_train, y_train)
 
-        # 5 : Menangkap inputan user
+        # 6 : Membuat prediksi pada data uji
+        y_pred = clf.predict(X_test)
+
+        # 7 : Membuat confusion matrix
+        cm = confusion_matrix(y_test, y_pred)
+
+        # 8 : Menangkap inputan user
         suhu = float(self.suhu_entry.get())
         kelembaban = float(self.kelembaban_entry.get())
         curah_hujan = float(self.curah_hujan_entry.get())
         kecepatan_angin = float(self.kecepatan_angin_entry.get())
         penyinaran_matahari = float(self.penyinaran_matahari_entry.get())
 
-        # 6 : Menampung data dari user dan menyimpan ke var input data dengan array
+        # 9 : Menampung data dari user dan menyimpan ke var input data dengan array
         input_data = [[suhu, kelembaban, curah_hujan,
                        kecepatan_angin, penyinaran_matahari]]
 
-        # 7 : Proses clasifikasi model
+        # 10 : Proses clasifikasi model
         input_data = scaler.transform(input_data)
         predicted_label = clf.predict(input_data)
 
-        # 8 : Hasil prediksi
+        # 11 : Hasil prediksi
 
-        print("Prediksi cuaca:", predicted_label[0])
+        # print("Prediksi cuaca:", predicted_label[0])
 
         cek_prediksi = predicted_label[0]
 
         if cek_prediksi == 1:
-            self.image_icon = ImageTk.PhotoImage(Image.open("hujan_ringan.png"))
+            self.image_icon = ImageTk.PhotoImage(
+                Image.open("hujan_ringan.png"))
             self.icon_hasil_prediksi.config(image=self.image_icon)
             self.hasil_prediksi.config(text="Hujan Ringan")
         elif cek_prediksi == 2:
-            self.image_icon = ImageTk.PhotoImage(Image.open("hujan_ringan.png"))
+            self.image_icon = ImageTk.PhotoImage(
+                Image.open("hujan_ringan.png"))
             self.icon_hasil_prediksi.config(image=self.image_icon)
             self.hasil_prediksi.config(text="Hujan Sedang")
         elif cek_prediksi == 3:
@@ -239,8 +267,19 @@ class WeatherPrediction(tk.Frame):
             self.image_icon = ImageTk.PhotoImage(Image.open("cerah.png"))
             self.icon_hasil_prediksi.config(image=self.image_icon)
             self.hasil_prediksi.config(text="Cerah")
-            
-        # pass
+
+        # Menampilkan grafik confusion matrix
+        fig = Figure(figsize=(5, 5), dpi=100)
+        ax = fig.add_subplot(111)
+
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax)
+        ax.set_title("Confusion Matrix")
+        ax.set_ylabel('Actual Label')
+        ax.set_xlabel('Predicted Label')
+
+        canvas = FigureCanvasTkAgg(fig, master=self)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=1, column=1, pady=20)
 
     def show_prev_page(self):
         self.master.switch_frame(StudentProfile)
