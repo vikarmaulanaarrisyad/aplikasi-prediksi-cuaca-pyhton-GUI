@@ -12,6 +12,8 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 
 class StudentProfile(tk.Frame):
@@ -94,7 +96,8 @@ class WeatherPrediction(tk.Frame):
         self.left_frame = tk.Frame(self)
         self.left_frame.grid(row=1, column=0, padx=5, pady=10, sticky="w")
         self.right_frame = tk.Frame(self)
-        self.right_frame.grid(row=1, column=1, padx=100, pady=200, sticky="nwes")
+        self.right_frame.grid(row=1, column=1, padx=100,
+                              pady=200, sticky="nwes")
 
         # FORM DAN LABEL SUHU
         self.suhu_label = tk.Label(
@@ -225,14 +228,12 @@ class WeatherPrediction(tk.Frame):
 
         # 6 : Membuat prediksi pada data uji
         y_pred = clf.predict(X_test)
-        
 
         # menampilkan classification report
         print(classification_report(y_test, y_pred))
 
         # 7 : Membuat confusion matrix
         cm = confusion_matrix(y_test, y_pred)
-        
 
         # 8 : Menangkap inputan user
         suhu = float(self.suhu_entry.get())
@@ -282,8 +283,12 @@ class WeatherPrediction(tk.Frame):
         ax.set_title("Confusion Matrix")
         ax.set_ylabel('Output')
         ax.set_xlabel('Target')
+        ax.set_yticklabels(np.arange(1, len(set(y))+1))
+        ax.set_xticklabels(np.arange(1, len(set(y))+1))
+        ax.invert_yaxis()
 
-        canvas = FigureCanvasTkAgg(fig, master=self)
+
+        canvas=FigureCanvasTkAgg(fig, master=self)
         canvas.draw()
         canvas.get_tk_widget().grid(row=1, column=1, pady=20)
 
@@ -297,19 +302,19 @@ class App(tk.Tk):
         self.switch_frame(StudentProfile)
 
     def switch_frame(self, frame_class):
-        new_frame = frame_class(self)
+        new_frame=frame_class(self)
         if hasattr(self, 'current_frame'):
             self.current_frame.destroy()
-        self.current_frame = new_frame
+        self.current_frame=new_frame
         self.current_frame.pack()
 
 
 if __name__ == '__main__':
-    app = App()
+    app=App()
     app.title('Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal')
     # getting screen width and height of display
-    width = app.winfo_screenwidth()
-    height = app.winfo_screenheight()
+    width=app.winfo_screenwidth()
+    height=app.winfo_screenheight()
 
     # setting tkinter app size
     app.geometry("%dx%d" % (width, height))
@@ -317,7 +322,7 @@ if __name__ == '__main__':
     app.resizable(False, False)
 
     # icon aplikasi
-    image_icon = tk.PhotoImage(file='assets/Images/logo.png')
+    image_icon=tk.PhotoImage(file='assets/Images/logo.png')
     app.iconphoto(False, image_icon)
 
     app.mainloop()
