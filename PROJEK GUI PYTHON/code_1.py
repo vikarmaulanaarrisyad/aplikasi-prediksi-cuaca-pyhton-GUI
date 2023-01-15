@@ -25,7 +25,7 @@ class StudentProfile(tk.Frame):
     def create_widgets(self):
         self.nama_judul = tk.Label(self)
         self.nama_judul.config(
-            text="Analisis Data dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
+            text="Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
         self.nama_judul.config(font=("Poppins", 17))
         self.nama_judul.grid(row=0, padx=10, pady=5)
 
@@ -89,7 +89,7 @@ class WeatherPrediction(tk.Frame):
     def create_widgets(self):
         self.nama_judul = tk.Label(self)
         self.nama_judul.config(
-            text="Analisis Data dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
+            text="Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
         self.nama_judul.config(font=("Poppins", 17))
         self.nama_judul.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
@@ -115,7 +115,7 @@ class WeatherPrediction(tk.Frame):
 
         # FORM DAN LABEL KELEMBABAN
         self.kelembaban_label = tk.Label(
-            self.left_frame, text="Kelembapan : ")
+            self.left_frame, text="Kelembaban : ")
         self.kelembaban_label.config(font=('Poppins', 17))
         self.kelembaban_label.grid(
             row=1, column=0, pady=10, sticky="w")
@@ -230,8 +230,6 @@ class WeatherPrediction(tk.Frame):
         y_pred = clf.predict(X_test)
 
         # menampilkan classification report
-        report = classification_report(y_test, y_pred,output_dict=True)
-        
         print(classification_report(y_test, y_pred))
 
         # 7 : Membuat confusion matrix

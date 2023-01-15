@@ -1,204 +1,326 @@
-import pickle
-from tkinter import ttk
 import tkinter as tk
-from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
-from tkinter import *
-import pandas as pd
 from PIL import ImageTk, Image
+import tkinter.messagebox as messagebox
+import pandas as pd
+from sklearn import svm
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+import seaborn as sns
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+import numpy as np
 
 
-# Halaman Pertama
-root = Tk()
-root.title('Prakiraan Cuaca')
-root.config(bg="#57adff")
-root.resizable(False, False)
+class StudentProfile(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.pack()
+        self.create_widgets()
 
-# getting screen width and height of display
-width = root.winfo_screenwidth()
-height = root.winfo_screenheight()
-# setting tkinter root size
-root.geometry("%dx%d" % (width, height))
-root.state('zoomed')
+    def create_widgets(self):
+        self.nama_judul = tk.Label(self)
+        self.nama_judul.config(
+            text="Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
+        self.nama_judul.config(font=("Poppins", 17))
+        self.nama_judul.grid(row=0, padx=10, pady=5)
 
+        self.image_logo = Image.open("undip.png")
+        self.image_logo = self.image_logo.resize(
+            (200, 200), resample=Image.Resampling.LANCZOS)
+        self.logo_undip = ImageTk.PhotoImage(self.image_logo)
+        self.logo_undip_label = tk.Label(self, image=self.logo_undip)
+        self.logo_undip_label.grid(row=1)
 
-# icon aplikasi
-image_icon = PhotoImage(file='assets/Images/logo.png')
-root.iconphoto(False, image_icon)
+        self.nama_mhs = tk.Label(self)
+        self.nama_mhs.config(text="Risky Via Feriyanti \n 21060120420027")
+        self.nama_mhs.config(font=("Poppins", 17))
+        self.nama_mhs.grid(row=2)
 
-# add judul
-label1 = Label(
-    root, text="Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
-label1.config(bg="#57adff", font=("Poppins", 18))
-label1.pack(fill=X, pady=15)
+        self.nama_pengunjung = tk.Label(self)
+        self.nama_pengunjung.config(font=(
+            "Poppins", 17))
+        self.nama_pengunjung.config(text="Ketikan Nama Anda : ")
+        self.nama_pengunjung.grid(row=3)
 
-# add logo undip
-logo = ImageTk.PhotoImage(Image.open("undip.png"))
-tampil_logo = Label(image=logo, bg="#57adff")
-tampil_logo.pack(fill=X, pady=2)
+        self.input_nama_pengunjung = tk.Entry(self)
+        self.input_nama_pengunjung.config(font=("Poppins", 15))
+        self.input_nama_pengunjung.config(width=30)
+        self.input_nama_pengunjung.grid(row=4, pady=10)
 
+        self.btn_submit_form = tk.Button(
+            self, text="Submit", command=self.submit_form)
+        self.btn_submit_form.config(font=('Poppins', 13, 'bold'))
+        self.btn_submit_form.config(justify="center")
+        self.btn_submit_form.grid(row=5, pady=5)
 
-# add Identitas Mahasiswa
-label2 = Label(
-    root, text="Risky Via Feriyanti \n 21060120420027")
-label2.config(bg="#57adff", font=("Poppins", 18))
-label2.pack()
+    def submit_form(self):
+        nama_pengunjung = self.input_nama_pengunjung.get()
 
-# Form Input
-form_input = Frame(root)
-form_input.config(bg="white")
-form_input.pack(padx=10, pady=10, fill='x', expand=True)
-nama_pengunjung = Label(form_input, text="Ketikkan Nama Pengunjung :")
-nama_pengunjung.pack(padx=100, fill='x', expand=True)
-Nama = StringVar()
-nama_depan_entry = Entry(form_input, textvariable=Nama)
-nama_depan_entry.pack(padx=100, pady=10, fill='x', expand=True)
+        if nama_pengunjung != "":
+            self.hasil_input_nama = tk.Label(
+                self, text='Selamat Datang ' + nama_pengunjung + ' Klik Selanjutnya, Untuk dapat membuka aplikasi ini',)
+            self.hasil_input_nama.config(font=("Poppins", 17))
+            self.hasil_input_nama.grid(row=6, padx=10, pady=10)
 
-L = Label(form_input, padx=5, text="Tekan Klik")
-L.pack()
+            self.next_button = tk.Button(
+                self, text="Selanjutnya", command=self.show_weather_page)
+            self.next_button.config(font=('Poppins', 13, 'bold'))
+            self.next_button.grid(row=7)
+        if nama_pengunjung == "":
+            messagebox.showwarning("Weather Prediction",
+                                   "Nama tidak boleh kosong")
 
-
-def hal():
-    label4 = Label(form_input, padx=5, text="Selamat Datang !!!")
-    label5 = Label(form_input, textvariable=Nama)
-    label6 = Label(form_input, text="Apakah ingin melihat prakiraan cuaca?")
-    label4.pack()
-    label5.pack()
-    label6.pack()
-
-
-tombol1 = Button(root, text="Klik", padx=150,
-                 pady=20, bg="red", fg="black", command=hal)
-
-tombol1.pack(fill='x', expand=True)
-
-# End Halaman Pertama
+    def show_weather_page(self):
+        if messagebox.askyesno("Weather Prediction", "Apakah Anda ingin melihat halaman prediksi cuaca?"):
+            self.master.switch_frame(WeatherPrediction)
 
 
-# Halaman Dua
-# Load the weather data
-df = pd.read_excel("datadf.xlsx")
+class WeatherPrediction(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.pack()
+        self.create_widgets()
 
-# Select the features and target variable
-X = df[['Tavg', 'RH_avg', 'RR', 'ss', 'ff_avg']]
-y = df['target']
+    def create_widgets(self):
+        self.nama_judul = tk.Label(self)
+        self.nama_judul.config(
+            text="Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal \n Menggunakan Metode Support Vector Machine (SVM)")
+        self.nama_judul.config(font=("Poppins", 17))
+        self.nama_judul.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+        self.left_frame = tk.Frame(self)
+        self.left_frame.grid(row=1, column=0, padx=5, pady=10, sticky="w")
+        self.right_frame = tk.Frame(self)
+        self.right_frame.grid(row=1, column=1, padx=100,
+                              pady=200, sticky="nwes")
 
-# Create the SVM classifier
-classifier = SVC(kernel='rbf', gamma='auto')
+        # FORM DAN LABEL SUHU
+        self.suhu_label = tk.Label(
+            self.left_frame, text="Suhu : ")
+        self.suhu_label.config(font=('Poppins', 17))
+        self.suhu_label.grid(row=0, column=0, pady=10, sticky="w")
 
-# Train the classifier
-classifier.fit(X_train, y_train)
+        suhu_var = tk.StringVar()
+        self.suhu_entry = tk.Entry(self.left_frame, textvariable=suhu_var)
+        self.suhu_entry.config(font=('Poppins', 17))
+        self.suhu_entry.config(width=5)
+        self.suhu_entry.grid(row=0, column=0, padx=270, pady=10, sticky="w")
+
+        # END FORM DAN LABEL SUHU
+
+        # FORM DAN LABEL KELEMBABAN
+        self.kelembaban_label = tk.Label(
+            self.left_frame, text="Kelembaban : ")
+        self.kelembaban_label.config(font=('Poppins', 17))
+        self.kelembaban_label.grid(
+            row=1, column=0, pady=10, sticky="w")
+
+        self.kelembaban_entry = tk.Entry(self.left_frame)
+        self.kelembaban_entry.config(font=('Poppins', 17))
+        self.kelembaban_entry.config(width=5)
+        self.kelembaban_entry.grid(
+            row=1, column=0, padx=270, pady=10, sticky="w")
+
+        # END FORM DAN LABEL KELEMBABAN
+
+        self.curah_hujan_label = tk.Label(
+            self.left_frame, text="Curah hujan : ")
+        self.curah_hujan_label.config(font=('Poppins', 17))
+        self.curah_hujan_label.grid(row=2, column=0, pady=10, sticky="w")
+
+        self.curah_hujan_entry = tk.Entry(self.left_frame)
+        self.curah_hujan_entry.config(font=('Poppins', 17))
+        self.curah_hujan_entry.config(width=5)
+        self.curah_hujan_entry.grid(
+            row=2, column=0, padx=270, pady=10, sticky="w")
+
+        self.kecepatan_angin_label = tk.Label(
+            self.left_frame, text="Kecepatan Angin : ")
+        self.kecepatan_angin_label.config(font=('Poppins', 17))
+        self.kecepatan_angin_label.grid(
+            row=3, column=0, pady=10, sticky="w")
+
+        self.kecepatan_angin_entry = tk.Entry(self.left_frame)
+        self.kecepatan_angin_entry.config(font=('Poppins', 17))
+        self.kecepatan_angin_entry.config(width=5)
+        self.kecepatan_angin_entry.grid(
+            row=3, column=0, padx=270, pady=10, sticky="w")
+
+        self.penyinaran_matahari_label = tk.Label(
+            self.left_frame, text="Penyinaran Matahari : ")
+        self.penyinaran_matahari_label.config(font=('Poppins', 17))
+        self.penyinaran_matahari_label.grid(
+            row=4, column=0, pady=10, sticky="w")
+
+        self.penyinaran_matahari_entry = tk.Entry(self.left_frame)
+        self.penyinaran_matahari_entry.config(font=('Poppins', 17))
+        self.penyinaran_matahari_entry.config(width=5)
+        self.penyinaran_matahari_entry.grid(
+            row=4, column=0, padx=270, pady=10, sticky="w")
+
+        self.hasil_prediksi_label = tk.Label(
+            self.left_frame, text="Hasil Prediksi")
+        self.hasil_prediksi_label.config(font=('Poppins', 17))
+        self.hasil_prediksi_label.grid(
+            row=6, column=0, pady=10, sticky="w")
+
+        self.icon_hasil_prediksi = tk.Label(self.left_frame)
+        self.icon_hasil_prediksi.config(font=('Poppins', 17))
+        self.icon_hasil_prediksi.grid(
+            row=6, column=0, padx=170, pady=10, sticky="w")
+
+        self.hasil_prediksi = tk.Label(self.left_frame)
+        self.hasil_prediksi.config(font=('Poppins', 17))
+        self.hasil_prediksi.grid(
+            row=6, column=0, padx=290, pady=10, sticky="w")
+
+        self.predict_button = tk.Button(
+            self.left_frame, text="Prediksi", command=self.predict_weather)
+        self.predict_button.config(font=('Poppins', 15))
+        self.predict_button.grid(row=5, column=0, pady=10, sticky="w")
+
+        self.prev_button = tk.Button(
+            self.left_frame, text="Sebelumnya", command=self.show_prev_page)
+        self.prev_button.config(font=('Poppins', 15))
+        self.prev_button.grid(row=5, column=0, padx=100, pady=10, sticky="w")
+
+        # Right Frame
+        # Consusion Matrix
+        # create table to display confusion matrix
+        # self.cm_label = tk.Label(self.right_frame, text="Confusion Matrix")
+        # self.cm_label.config(font=("Poppins", 17))
+        # self.cm_label.grid(row=1, column=1)
+
+        # self.city_label = tk.Label(self.right_frame, text="Kota:")
+        # self.city_label.grid(row=1)
+
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+
+    def predict_weather(self):
+        # logika untuk memprediksi cuaca
+
+        # 1 : Memuat dataset cuaca
+        weather_data = pd.read_excel('datadf.xlsx')
+
+        # 2 : Memisahkan fitur dan label
+        X = weather_data[['Tavg', 'RH_avg', 'RR', 'ss', 'ff_avg']]
+        y = weather_data['target']
+
+        # 3 : Membagi data menjadi data latih dan data uji
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.3, random_state=0)
+
+        # 4 : melakukan preprocesing data
+        scaler = StandardScaler()
+        # X = scaler.fit_transform(X)
+        X_train = scaler.fit_transform(X_train)
+        X_test = scaler.transform(X_test)
+
+        # 5 : Membuat objek SVM dan melatih model dengan dataMembuat objek SVM dan melatih model dengan data
+        clf = svm.SVC()
+        clf.fit(X_train, y_train)
+
+        # 6 : Membuat prediksi pada data uji
+        y_pred = clf.predict(X_test)
+
+        # menampilkan classification report
+        print(classification_report(y_test, y_pred))
+
+        # 7 : Membuat confusion matrix
+        cm = confusion_matrix(y_test, y_pred)
+
+        # 8 : Menangkap inputan user
+        suhu = float(self.suhu_entry.get())
+        kelembaban = float(self.kelembaban_entry.get())
+        curah_hujan = float(self.curah_hujan_entry.get())
+        kecepatan_angin = float(self.kecepatan_angin_entry.get())
+        penyinaran_matahari = float(self.penyinaran_matahari_entry.get())
+
+        # 9 : Menampung data dari user dan menyimpan ke var input data dengan array
+        input_data = [[suhu, kelembaban, curah_hujan,
+                       kecepatan_angin, penyinaran_matahari]]
+
+        # 10 : Proses clasifikasi model
+        input_data = scaler.transform(input_data)
+        predicted_label = clf.predict(input_data)
+
+        # 11 : Hasil prediksi
+
+        # print("Prediksi cuaca:", predicted_label[0])
+
+        cek_prediksi = predicted_label[0]
+
+        if cek_prediksi == 1:
+            self.image_icon = ImageTk.PhotoImage(
+                Image.open("hujan_ringan.png"))
+            self.icon_hasil_prediksi.config(image=self.image_icon)
+            self.hasil_prediksi.config(text="Hujan Ringan")
+        elif cek_prediksi == 2:
+            self.image_icon = ImageTk.PhotoImage(
+                Image.open("hujan_ringan.png"))
+            self.icon_hasil_prediksi.config(image=self.image_icon)
+            self.hasil_prediksi.config(text="Hujan Sedang")
+        elif cek_prediksi == 3:
+            self.image_icon = ImageTk.PhotoImage(Image.open("hujan_lebat.png"))
+            self.icon_hasil_prediksi.config(image=self.image_icon)
+            self.hasil_prediksi.config(text="Hujan Lebat")
+        elif cek_prediksi == 4:
+            self.image_icon = ImageTk.PhotoImage(Image.open("cerah.png"))
+            self.icon_hasil_prediksi.config(image=self.image_icon)
+            self.hasil_prediksi.config(text="Cerah")
+
+        # Menampilkan grafik confusion matrix
+        fig = Figure(figsize=(5, 5), dpi=100)
+        ax = fig.add_subplot(111)
+
+        sns.heatmap(cm, annot=True, fmt='.0f', cmap='Blues', ax=ax)
+        ax.set_title("Confusion Matrix")
+        ax.set_ylabel('Output')
+        ax.set_xlabel('Target')
+        # ax.set_yticklabels(np.arange(1, len(set(y))+1))
+        # ax.set_xticklabels(np.arange(1, len(set(y))+1))
+        # ax.invert_yaxis()
+
+        canvas = FigureCanvasTkAgg(fig, master=self)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=1, column=1, pady=20)
+
+    def show_prev_page(self):
+        self.master.switch_frame(StudentProfile)
 
 
-def open():
-    global logo
-    top = Toplevel()
-    top.title(" Perkiraaan cuaca ")
-    top.resizable(False, False)
-    top.config(bg="#57adff")
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.switch_frame(StudentProfile)
+
+    def switch_frame(self, frame_class):
+        new_frame = frame_class(self)
+        if hasattr(self, 'current_frame'):
+            self.current_frame.destroy()
+        self.current_frame = new_frame
+        self.current_frame.pack()
+
+
+if __name__ == '__main__':
+    app = App()
+    app.title('Analisis Data Dan Klasifikasi Prakiraan Cuaca Di Kabupaten Tegal')
+    # getting screen width and height of display
+    width = app.winfo_screenwidth()
+    height = app.winfo_screenheight()
+
+    # setting tkinter app size
+    app.geometry("%dx%d" % (width, height))
+    app.state('zoomed')
+    app.resizable(False, False)
 
     # icon aplikasi
-    image_icon = PhotoImage(file='assets/Images/logo.png')
-    top.iconphoto(False, image_icon)
+    image_icon = tk.PhotoImage(file='assets/Images/logo.png')
+    app.iconphoto(False, image_icon)
 
-    # getting screen width and height of display
-    width = top.winfo_screenwidth()
-    height = top.winfo_screenheight()
-    # setting tkinter root size
-    top.geometry("%dx%d" % (width, height))
-    top.state('zoomed')
-
-    Round_box = PhotoImage(file='assets/Images/Rounded Rectangle 1.png')
-    Label(top, image=Round_box, bg="#57adff").place(x=30, y=110)
-
-    # label
-    label1 = Label(top, text="Suhu", font=(
-        "Helvetica", 18), fg="white", bg="#57adff",)
-    label1.place(x=50, y=122)
-
-    label2 = Label(top, text="Kelembapan", font=(
-        "Helvetica", 18), fg="white", bg="#57adff")
-    label2.place(x=50, y=155)
-
-    label3 = Label(top, text="Curah Hujan", font=(
-        "Helvetica", 18), fg="white", bg="#57adff")
-    label3.place(x=50, y=188)
-    label4 = Label(top, text="Kecepatan Angin", font=(
-        "Helvetica", 18), fg="white", bg="#57adff")
-    label4.place(x=50, y=221)
-    label5 = Label(top, text="Penyinaran Matahari", font=(
-        "Helvetica", 18), fg="white", bg="#57adff")
-    label5.place(x=50, y=254)
-    label6 = Label(top, text="Prediksi Cuaca", font=(
-        "Helvetica", 18), fg="white", bg="#57adff")
-    label6.place(x=50, y=287)
-
-    def predict():
-        # Get the user input
-        Tavg = float(Tavg_var.get())
-        RH_avg = float(RH_avg_var.get())
-        RR = float(RR_var.get())
-        ss = float(ss_var.get())
-        ff_avg = float(ff_avg_var.get())
-
-        # Use the model to make a prediction
-        prediction = classifier.predict([[Tavg, RH_avg, RR, ss, ff_avg]])
-        cekTarget = prediction[0]
-
-        if cekTarget == 1:
-            label_var.set("Hujan Ringan")
-        elif cekTarget == 2:
-            label_var.set("Hujan Sedang")
-        elif cekTarget == 3:
-            label_var.set("Hujan Lebat")
-        else:
-            label_var.set("Cerah")
-
-        # label_var.set(f"Prediction: {prediction[0]}")
-
-    button = tk.Button(top, text="Predict", font=(
-        'poppins', 15), command=predict)
-    button.place(x=288, y=330)
-
-    # Add input fields for the features
-
-    Tavg_var = tk.StringVar()
-    Tavg_entry = tk.Entry(top, width=20, font=(
-        'poppins', 15),  bg="#203243", border=0, fg="white", textvariable=Tavg_var)
-    Tavg_entry.place(x=288, y=120)
-
-    RH_avg_var = tk.StringVar()
-    RH_avg_entry = tk.Entry(top, width=20, font=(
-        'poppins', 15), bg="#203243", border=0, fg="white",  textvariable=RH_avg_var)
-    RH_avg_entry.place(x=288, y=155)
-
-    RR_var = tk.StringVar()
-    RR_entry = tk.Entry(top, width=20, font=(
-        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=RR_var)
-    RR_entry.place(x=288, y=188)
-
-    ss_var = tk.StringVar()
-    ss_entry = tk.Entry(top, width=20, font=(
-        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=ss_var)
-    ss_entry.place(x=288, y=221)
-
-    ff_avg_var = tk.StringVar()
-    ff_avg_entry = tk.Entry(top, width=20, font=(
-        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=ff_avg_var)
-    ff_avg_entry.place(x=288, y=254)
-
-    # Add a label to display the prediction
-    label_var = tk.StringVar()
-    label = tk.Label(top, width=21, font=(
-        'poppins', 15), bg="#203243", border=0, fg="white", textvariable=label_var)
-    label.place(x=288, y=287)
-
-
-btn = Button(root, padx=50, text=" Open Second Window", command=open).pack()
-
-
-mainloop()
+    app.mainloop()
